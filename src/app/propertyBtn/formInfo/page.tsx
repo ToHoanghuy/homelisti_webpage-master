@@ -53,19 +53,19 @@ const priceUnit = [
 ];
 
 const bed = [
-  { id: 18, label: "1" },
-  { id: 19, label: "2" },
-  { id: 10, label: "3" },
-  { id: 21, label: "4" },
-  { id: 22, label: "5" },
-  { id: 23, label: "6" },
+  { id: 19, label: "1" },
+  { id: 20, label: "2" },
+  { id: 21, label: "3" },
+  { id: 22, label: "4" },
+  { id: 23, label: "5" },
+  { id: 24, label: "6" },
 ];
 
 const bath = [
-  { id: 24, label: "1" },
-  { id: 25, label: "2" },
-  { id: 26, label: "3" },
-  { id: 27, label: "4" },
+  { id: 25, label: "1" },
+  { id: 26, label: "2" },
+  { id: 27, label: "3" },
+  { id: 28, label: "4" },
 ];
 
 const amenitiesCheck = [
@@ -117,6 +117,25 @@ const FormInfo = (props: properties) => {
   const [listingSauna, SetListingSauna] = useState(-1);
   const [listingWasher, setListingWasher] = useState(-1);
   const { JWT } = useGlobalContext();
+  const [selectedImage, setSelectedImage] = useState<string[]>([]);
+  const [formData, setFormData] = useState<FormData | null>(null); 
+
+const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const files = event.target.files;
+  if (files) {
+    // Tạo một đối tượng FormData
+    const formData = new FormData();
+
+    // Duyệt qua các file và thêm chúng vào FormData
+    Array.from(files).forEach((file) => {
+      formData.append("images", file); // "images" là tên trường sẽ được backend sử dụng
+    });
+
+    // Lưu formData vào state (hoặc gửi đi ngay lập tức)
+    setFormData(formData);
+  }
+};
+
 
   const handleCheckAmenities = (event: React.ChangeEvent) => {
     const target = event.target as HTMLInputElement;
@@ -174,6 +193,11 @@ const FormInfo = (props: properties) => {
     }
   };
 
+  const handleParkingChange = (event: any) => {
+    setListingParking(event.target.value);
+    console.log('parking: ', listingParking);
+  };
+
   const router = useRouter();
 
   useEffect(() => {
@@ -193,14 +217,28 @@ const FormInfo = (props: properties) => {
   }, [props.listingType]);
 
   const handleSubmitForm = () => {
+    // if (!formData) {
+    //   console.log('khong co anh');
+    //   return;
+    // }
     console.log(props.category);
     console.log(props.listingType);
     if (JWT !== "") {
       api.defaults.headers.common = { Authorization: `Bearer ${JWT}` };
+      //const formData = new FormData();
+
+    // Thêm ảnh vào formData
+    // selectedImage.forEach((image) => {
+    //   formData.append("images", image); // 'images' là tên trường cho file ảnh
+    // });
       api
         .post(
-          `Listings?author_id=15&title=${listingTitle}&price=${listingPrice}&category_id=${props.category}&description=${listingDescription}&listing_type=${props.listingType}&tv=${listingTV}&air=${listingAir}&barbeque=${listingBarbeque}&gym=${listingGym}&swim=${listingSwim}&laundry=${listingLaundry}&microwave=${listingMicrowave}&outdoor=${listingOutdoor}&lawn=${listingLawn}&refrigerator=${listingRefRigerator}&sauna=${listingSauna}&washer=${listingWasher}&parking=16&bed=${listingBed}&bath=${listingBath}`
-
+          `Listings?author_id=15&title=${listingTitle}&price=${listingPrice}&category_id=${props.category}&description=${listingDescription}&listing_type=${props.listingType}&tv=${listingTV}&air=${listingAir}&barbeque=${listingBarbeque}&gym=${listingGym}&swim=${listingSwim}&laundry=${listingLaundry}&microwave=${listingMicrowave}&outdoor=${listingOutdoor}&lawn=${listingLawn}&refrigerator=${listingRefRigerator}&sauna=${listingSauna}&washer=${listingWasher}&parking=${listingParking}&bed=${listingBed}&bath=${listingBath}`, 
+          // formData, {
+          //   headers: {
+          //     "Content-Type": "multipart/form-data", // Đảm bảo gửi đúng loại dữ liệu là multipart/form-data
+          //   },
+          // }
           //   {
           //     headers: {
           //       Authorization: `Bearer ${JWT}`,
@@ -217,6 +255,54 @@ const FormInfo = (props: properties) => {
           console.log(e);
           router.push("/property");
         });
+    }
+  };
+
+  const handleSubmitForm11 = () => {
+
+    const formData = new FormData();
+    formData.append("author_id", "15");
+    formData.append("title", listingTitle);
+    formData.append("price", listingPrice);
+    formData.append("category_id", props.category.toString());
+    formData.append("description", listingDescription);
+    formData.append("listing_type", props.listingType);
+    formData.append("tv", listingTV.toString());
+    formData.append("air", listingAir.toString());
+    formData.append("barbeque", listingBarbeque.toString());
+    formData.append("gym", listingGym.toString());
+    formData.append("swim", listingSwim.toString());
+    formData.append("laundry", listingLaundry.toString());
+    formData.append("microwave", listingMicrowave.toString());
+    formData.append("outdoor", listingOutdoor.toString());
+    formData.append("lawn", listingLawn.toString());
+    formData.append("refrigerator", listingRefRigerator.toString());
+    formData.append("sauna", listingSauna.toString());
+    formData.append("washer", listingWasher.toString());
+    formData.append("parking", listingParking.toString());
+    formData.append("bed", listingBed.toString());
+    formData.append("bath", listingBath.toString());
+  
+    // Thêm các ảnh đã chọn vào formData
+    selectedImage.forEach((image, index) => {
+      formData.append(`images`, image); // Thêm ảnh vào FormData
+    });
+
+    if (JWT !== "") {
+      api.defaults.headers.common = { Authorization: `Bearer ${JWT}` };
+      api
+      .post("/Listings", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      })
+      .then((res) => {
+        console.log("Response:", res.data);
+        router.push("/property");
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
     }
   };
   return (
@@ -464,9 +550,11 @@ const FormInfo = (props: properties) => {
                             defaultValue="female"
                             name="radio-buttons-group"
                             className={Style.formSetting}
+                            onChange={handleParkingChange}
                           >
                             <FormControlLabel
-                              value="Price"
+                              //value="Price"
+                              value = "16"
                               control={
                                 <Radio
                                   className={Style.settingRadio}
@@ -476,7 +564,8 @@ const FormInfo = (props: properties) => {
                               label="Yes"
                             />
                             <FormControlLabel
-                              value="Price Range"
+                              //value="Price Range"
+                              value = "17"
                               control={
                                 <Radio
                                   className={Style.settingRadio}
@@ -486,7 +575,8 @@ const FormInfo = (props: properties) => {
                               label="No"
                             />
                             <FormControlLabel
-                              value="Disable"
+                              //value="Disable"
+                              value = "18"
                               control={
                                 <Radio
                                   className={Style.settingRadio}
@@ -619,8 +709,14 @@ const FormInfo = (props: properties) => {
                         startIcon={<CloudUploadIcon />}
                       >
                         Upload file
-                        <VisuallyHiddenInput type="file" />
+                        <VisuallyHiddenInput onChange={handleImageChange} type="file" />
                       </Button>
+
+
+                      {selectedImage.map((image, index) => (
+                          <img key={index} src={image} alt={`Uploaded ${index}`} width="100" height="100" />
+                      ))}
+
 
                       <Box
                         className={Style.formGroup}
@@ -664,7 +760,7 @@ const FormInfo = (props: properties) => {
                             startIcon={<CloudUploadIcon />}
                           >
                             Browse file
-                            <VisuallyHiddenInput type="image" />
+                            <VisuallyHiddenInput  type="image" />
                           </Button>
                         </div>
 

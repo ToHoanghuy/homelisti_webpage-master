@@ -209,19 +209,19 @@ const Home = () => {
         {
           ID: 17354,
           title: "rosy_janner1",
-          url: "https://homlisti.tpblog.net/wp-content/uploads/classified-listing/2022/03/rosy_janner1.jpg",
+          url: "https://images.unsplash.com/photo-1494526585095-c41746248156?q=80&w=1770&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
           alt: "",
         },
         {
           ID: 17355,
           title: "rosy_janner2",
-          url: "https://homlisti.tpblog.net/wp-content/uploads/classified-listing/2022/03/rosy_janner2.jpg",
+          url: "https://images.unsplash.com/photo-1494526585095-c41746248156?q=80&w=1770&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
           alt: "",
         },
         {
           ID: 17356,
           title: "rosy_janner3",
-          url: "https://homlisti.tpblog.net/wp-content/uploads/classified-listing/2022/03/rosy_janner3.jpg",
+          url: "https://images.unsplash.com/photo-1494526585095-c41746248156?q=80&w=1770&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
           alt: "",
         },
       ],
@@ -474,6 +474,7 @@ const Home = () => {
 
   useEffect(() => {
     handleLoadListingWithType();
+    console.log(listingTypes);
   }, [listingTypes]);
 
   const handleLoadListing = () => {
@@ -494,10 +495,11 @@ const Home = () => {
   const handleLoadListingWithType = () => {
     api
       .get(
-        `Listings/filter?title=null&type=${listingTypes}&category_id=0&location_id=0&min_price=0&max_price=10000000&sort_by=date-desc`
+        `Listings/filter?title=null&type=${listingTypes}&category_id=0&location_id=0&min_price=0&max_price=1000000000&sort_by=date-desc`
       )
       .then((res) => {
         if (res.status === 200) {
+          console.log('ok');
           setListingsData(res.data);
           setLoading(false);
         }
@@ -545,7 +547,7 @@ const Home = () => {
               display: "flex",
               alignItems: "center",
               backgroundSize: "cover",
-              backgroundImage: `url('https://homlisti.tpblog.net/wp-content/uploads/2021/08/home-3-main-banner.jpg')`,
+              backgroundImage: `url('https://images.unsplash.com/photo-1494526585095-c41746248156?q=80&w=1770&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D')`,
               borderBottomLeftRadius: "50% 20%",
               borderBottomRightRadius: "50% 20%",
               minHeight: "732px",

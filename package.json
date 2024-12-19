@@ -16,6 +16,8 @@
     "@mui/lab": "^5.0.0-alpha.153",
     "@mui/material": "^5.14.18",
     "axios": "^1.6.2",
+    "ethers": "^6.13.4",
+    "lodash": "^4.17.21",
     "next": "^13.5.4",
     "package": "^1.0.1",
     "react": "^18.3.1",
@@ -29,6 +31,7 @@
     "tippy.js": "^6.3.7"
   },
   "devDependencies": {
+    "@types/lodash": "^4.17.13",
     "@types/node": "^20",
     "@types/react": "^18.2.33",
     "@types/react-dom": "^18.2.14",

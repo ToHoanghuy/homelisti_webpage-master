@@ -44,8 +44,16 @@ import ProductCard from "@/components/productCard/productCard";
 import ScrollToTopButton from "@/components/scrollToTopButton";
 import NewsLetter from "@/components/newsLetter/newsLetter";
 import LoadingPage from "@/components/loadingPage/loading";
+import { Category } from "@mui/icons-material";
 
-const types: string[] = ["Sell", "Buy", "Rent"];
+interface Category {
+  term_id: number;
+  name: string;
+  slug: string;
+  count: number;  
+}
+
+const types: string[] = ["sell", "buy", "rent"];
 
 const category: string[] = [
   "Apartments",
@@ -57,12 +65,12 @@ const category: string[] = [
 ];
 
 const location: string[] = [
-  "California",
-  "Claremont",
-  "Kansas",
-  "Abliene",
-  "Louisiana",
-  "New Jersey",
+  "New York",
+  "Los Angeles",
+  "Chicago",
+  "Houston",
+  "Phoenix",
+  "Philadelphia",
 ];
 
 const amenities: string[] = [
@@ -446,9 +454,9 @@ const Property = () => {
   useEffect(() => {
     setIsLoading(true);
     handleLoadListing();
-    handleLoadCategories();
-    handleLoadListingTypes();
-    handleLoadLocations();
+    //handleLoadCategories();
+    //handleLoadListingTypes();
+    //handleLoadLocations();
   }, []);
 
   useEffect(() => {
@@ -476,6 +484,7 @@ const Property = () => {
       .then((res) => {
         if (res.status === 200) {
           setCategories(res.data);
+          console.log(categories);
           setIsLoading(false);
         }
       })
@@ -491,6 +500,7 @@ const Property = () => {
       .then((res) => {
         if (res.status === 200) {
           setListingTypes(res.data);
+          console.log(listingTypes);
           setIsLoading(false);
         }
       })
@@ -505,7 +515,8 @@ const Property = () => {
       .get("Locations")
       .then((res) => {
         if (res.status === 200) {
-          setLocations(res.data);
+          setSelectedLocations(res.data);
+          console.log('da call dc api');
           setIsLoading(false);
         }
       })
@@ -516,27 +527,79 @@ const Property = () => {
   };
 
   const handleFilterListingData = () => {
-    // setIsLoading(true);
-    // api
-    //   .get(
-    //     `Listings/filter?title=${selectedTitle.selectedValue}&type=${
-    //       selectedListingTypes.selectedValue
-    //     }&category_id=${selectedCategories.selectedValue}&location_id=${
-    //       selectedLocations.selectedValue
-    //     }&min_price=${priceRange[0] * 10000}&max_price=${
-    //       priceRange[1] * 10000
-    //     }&&sort_by=${selectedSortBy.selectedValue}`
-    //   )
-    //   .then((res) => {
-    //     if (res.status === 200) {
-    //       setListingsData(res.data);
-    //       setIsLoading(false);
-    //     }
-    //   })
-    //   .catch((error) => {
-    //     console.log(error);
-    //     setIsLoading(false);
-    //   });
+    const title = selectedTitle.selectedValue || "";
+    
+    let categoryId;
+    switch (selectedCategories) {
+      case "Apartments":
+        categoryId = 1;
+        break;
+      case "Commercial":
+        categoryId = 2;
+        break;
+      case "Office":
+        categoryId = 3;
+        break;
+      case "Restaurant":
+        categoryId = 4;
+        break;
+      case "Studio Home":
+        categoryId = 5;
+        break;
+      case "Villa":
+        categoryId = 6;
+        break;
+      default:
+        categoryId = null; 
+    }
+
+    let locationId;
+    switch (selectedLocations) {
+      case "New York":
+        locationId = 1;
+        break;
+      case "Los Angeles":
+        locationId = 2;
+        break;
+      case "Chicago":
+        locationId = 3;
+        break;
+      case "Houston":
+        locationId = 4;
+        break;
+      case "Phoenix":
+        locationId = 5;
+        break;
+      case "Philadelphia":
+        locationId = 6;
+        break;
+
+      default:
+        locationId = 1; 
+    }
+
+    setIsLoading(true);
+    api
+      .get(
+        `Listings/filter?title=${selectedTitle.selectedValue}&type=${
+          selectedListingTypes
+        }&category_id=${categoryId}&location_id=${
+          locationId
+        }&min_price=${priceRange[0] * 10000}&max_price=${
+          priceRange[1] * 1000000
+        }&&sort_by=${selectedSortBy.selectedValue}`
+      )
+      .then((res) => {
+        if (res.status === 200) {
+          console.log('da log duoc')
+          setListingsData(res.data);
+          setIsLoading(false);
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+        setIsLoading(false);
+      });
   };
 
   const handleTitleChange = (event: React.ChangeEvent<{ value: unknown }>) => {
@@ -547,10 +610,13 @@ const Property = () => {
 
   const handleListingTypesChange = (event: SelectChangeEvent) => {
     setSelectedListingTypes(event.target.value as string);
+    console.log(selectedListingTypes);
   };
 
   const handleCategoriesChange = (event: SelectChangeEvent) => {
     setSelectedCategories(event.target.value as string);
+    console.log(selectedCategories);
+
   };
 
   const handleLocationsChange = (event: SelectChangeEvent) => {
@@ -653,7 +719,7 @@ const Property = () => {
                       onChange={handleCategoriesChange}
                     >
                       <MenuItem value={0}>All Categories</MenuItem>
-                      {categories?.map((index, category) => (
+                      {categories?.map(( category, index ) => (
                         <MenuItem key={index} value={category}>
                           {category}
                         </MenuItem>
@@ -673,7 +739,7 @@ const Property = () => {
                       onChange={handleLocationsChange}
                     >
                       <MenuItem value={0}>All Cities</MenuItem>
-                      {locations?.map((index, location) => (
+                      {locations?.map((location, index) => (
                         <MenuItem key={index} value={location}>
                           {location}
                         </MenuItem>

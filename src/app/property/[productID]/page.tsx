@@ -342,7 +342,7 @@ const ProductDetail = ({ params }: { params: { productID: string } }) => {
         label: "Purpose",
         value: [
           {
-            id: 28,
+            id: 29,
             data: "sell",
           },
         ],
